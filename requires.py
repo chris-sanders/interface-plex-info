@@ -17,7 +17,7 @@ class PlexInfoRequires(RelationBase):
     def changed(self):
         log('plex-info.available','INFO')
         self.set_state('{relation_name}.available')
-        if self.hostname() and self.port() and self.user() and self.passwd():
+        if self.hostname() and self.port():
             log('plex-info.triggered','INFO')
             self.set_state('{relation_name}.triggered')
             if self.hostname() != self.get_local('hostname') or\
@@ -29,6 +29,12 @@ class PlexInfoRequires(RelationBase):
                 self.set_local('user',self.user())
                 self.set_local('passwd',self.passwd())
                 self.remove_state('{relation_name}.configured')
+        else:
+            log('''plex-info not yet available
+                 hostname: {}
+                 port: {}
+                 user: {}
+                 passwd: {}'''.format(self.hostname(),self.port(),self.user(),self.passwd()),'WARNING')
 
     @hook('{requires:plex-info}-relation-{departed}')
     def departed(self):
